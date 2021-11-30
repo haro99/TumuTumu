@@ -2,7 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using DG.Tweening;
 
+public enum State
+{
+    Stop,
+    Play
+}
 public class GameManager : MonoBehaviour
 {
     public GameObject[] Fruits;
@@ -14,115 +21,215 @@ public class GameManager : MonoBehaviour
     private LayerMask layerMask;
     public AudioSource Audio;
     public string name;
-    public int earnings;
-    public string[] names;
-    public int[] norma;
-    public Text[] texts;
-    public Text Score;
+    public int earnings, score, maxcombo, maxerase, release, openstagenumber, maxfruit;
+    public State state;
+    public Animator FadeAnimator;
+    //public string[] names;
 
+    //UI
+    public Text Score, Timer;
+    public Text[] Missons;
+    public GameObject[] stars;
+    public GameObject Canvas, Point, Buttons, MissonPanel;
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0; i < norma.Length;i++)
-        {
-            norma[i] = Random.Range(3, 10);
-        }
-
-        StartCoroutine(FruitSet(15));
+        release = PlayerPrefs.GetInt("release");
+        Missons[0].text = StageSelectManager.missonData.misson1 + "コンボ以上達成";
+        Missons[1].text = StageSelectManager.missonData.misson2 + "個以上消す";
+        Missons[2].text = "スコアで" + StageSelectManager.missonData.misson3 + "点以上獲得する";
+        openstagenumber = (int)StageSelectManager.missonData.openstagenumber;
+        maxfruit = (int)StageSelectManager.missonData.fruit;
+        StartCoroutine(FruitSet(25));
+        StartCoroutine(Starting());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        switch (state)
         {
-            Debug.Log("押されてるよ");
-            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            case State.Play:
 
-            pos.z = 0;
-            RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 10, layerMask);
-            Debug.DrawRay(pos, Vector2.zero, Color.blue, 10);
+                if (Input.GetMouseButton(0))
+                {
+                    Debug.Log("押されてるよ");
+                    Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-            if (hit)
-            {           
-                Debug.Log(hit.collider.gameObject);
-                GameObject obj = hit.collider.gameObject;
-                if (name == "")
-                {
-                    list.Add(obj);
-                    selectojbect = obj;
-                    name = obj.GetComponent<Fruit>().fruitname;
-                    obj.transform.localScale = new Vector3(3f, 3f, 3f);
-                }
-                else if(CheckDistance(obj))
-                {
-                    string getname = obj.GetComponent<Fruit>().fruitname;
-                    if (name == getname && !list.Contains(obj))
+                    pos.z = 0;
+                    RaycastHit2D hit = Physics2D.Raycast(pos, Vector2.zero, 10, layerMask);
+                    Debug.DrawRay(pos, Vector2.zero, Color.blue, 10);
+
+                    if (hit)
                     {
-                        list.Add(obj);
-                        obj.transform.localScale = new Vector3(3f, 3f, 3f);
+                        Debug.Log(hit.collider.gameObject);
+                        GameObject obj = hit.collider.gameObject;
+                        //初回のくだもの
+                        if (name == "")
+                        {
+                            list.Add(obj);
+                            selectojbect = obj;
+                            name = obj.GetComponent<Fruit>().fruitname;
+                            obj.transform.localScale = new Vector3(3f, 3f, 3f);
+                        }//一定距離なら
+                        else if (CheckDistance(obj))
+                        {
+                            string getname = obj.GetComponent<Fruit>().fruitname;
+                            //同じ名前でかつゲットリストに登録されてないものなら
+                            if (name == getname && !list.Contains(obj))
+                            {
+                                list.Add(obj);
+                                selectojbect = obj;
+                                obj.transform.localScale = new Vector3(3f, 3f, 3f);
+                            }
+                        }
                     }
                 }
-            }
-        }
 
-        if (Input.GetMouseButtonUp(0))
-        {
-            Debug.Log("押されてないよ");
+                if (Input.GetMouseButtonUp(0))
+                {
+                    Debug.Log("押されてないよ");
 
-            if (list.Count > 2)
-            {
-                Debug.Log("3個異常揃ってるよ");
-                for (int i =0; i<list.Count;i++)
-                {
-                    if (i < 2)
+                    //リストに入ってる果物の処理
+                    if (list.Count > 1)
                     {
-                        Destroy(list[i]);
+                        Debug.Log("3個以上揃ってるよ");
+                        int point = 0;
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            list[i].GetComponent<Fruit>().Erase();
+                            point += 100;
+                        }
+                        StartCoroutine(FruitSet(list.Count));
+                        int number = list.Count - 2;
+                        //for (int i = 0; i < 3; i++)
+                        //{
+                        //    if (name == names[i])
+                        //    {
+                        //        //stocks[i] += number;
+                        //        break;
+                        //    }
+                        //}
+
+                        //ポイント表示
+                        Debug.Log(point);
+                        score += point;
+                        Vector3 position = Camera.main.WorldToScreenPoint(list[list.Count - 1].transform.position);
+                        GameObject SetPoint = Instantiate(Point, position, Quaternion.identity, Canvas.transform);
+                        SetPoint.GetComponent<Text>().text = "+" + point.ToString();
+                        Score.text = score.ToString();
+                        Destroy(SetPoint, 2f);
+
+                        //Maxコンボ、消した数の処理
+                        if (maxcombo < list.Count)
+                            maxcombo = list.Count;
+                        maxerase += list.Count;
+                        list.Clear();
+
                     }
-                    else 
+                    else
                     {
-                        list[i].GetComponent<Fruit>().Moveing();
+                        Debug.Log("2個未満だよ");
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            list[i].transform.localScale = new Vector3(2.5f, 2.5f, 1f);
+                        }
+                        list.Clear();
                     }
+                    name = "";
                 }
-                StartCoroutine(FruitSet(list.Count));
-                int number = list.Count - 2;
-                for (int i = 0; i < 3; i++)
-                {
-                    if (name == names[i])
-                    {
-                        //stocks[i] += number;
-                        break;
-                    }
-                }
-                list.Clear();
-            }
-            else
-            {
-                Debug.Log("3個未満だよ");
-                list.Clear();
-            }
-            name = "";
+                break;
         }
     }
 
+    /// <summary>
+    /// 同じ果物の距離のチェック
+    /// </summary>
+    /// <param name="target"></param>
+    /// <returns></returns>
     bool CheckDistance(GameObject target)
     {
         float distance = Vector2.Distance(selectojbect.transform.position, target.transform.position);
         Debug.Log(distance);
-        if (distance < 4f)
+        if (distance < 2f)
         {
             return true;
         }
         return false;
     }
 
+    /// <summary>
+    /// フルーツの生成
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns></returns>
     IEnumerator FruitSet(int number)
     {
         for (int i = 0; i < number; i++)
         {
-            GameObject obj = Instantiate(Fruits[Random.Range(0, Fruits.Length)], Drop.transform.position, Quaternion.identity);
+            GameObject obj = Instantiate(Fruits[Random.Range(0, maxfruit)], Drop.transform.position, Quaternion.identity);
             obj.name = i.ToString();
             yield return null;
         }
+    }
+
+    //ゲーム終了語のリザルト
+    public void GameEnd()
+    {
+        var sequence = DOTween.Sequence();
+        sequence.Append(MissonPanel.transform.DOLocalMoveY(-150f, 2f).SetEase(Ease.OutBounce));
+        if (StageSelectManager.missonData.misson1 <= maxcombo)
+            sequence.Append(stars[0].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        if (StageSelectManager.missonData.misson2 <= maxerase)
+            sequence.Append(stars[1].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        if (StageSelectManager.missonData.misson3 <= score)
+            sequence.Append(stars[2].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        sequence.AppendInterval(3f);
+
+        sequence.Play()
+        .OnComplete(() =>
+        {
+            //完了時に呼ばれる
+            Debug.Log("OnComplete");
+            Buttons.SetActive(true);
+        });
+        //if(release<openstagenumber)
+        //    PlayerPrefs.SetInt("release", openstagenumber);
+        //SceneManager.LoadScene(1);
+    }
+
+    IEnumerator Starting()
+    {
+        yield return new WaitUntil(() => FadeAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
+
+        var sequence = DOTween.Sequence();
+
+        sequence.AppendInterval(3f);
+        sequence.Append(MissonPanel.transform.DOLocalMoveY(1500f, 2f));
+        sequence.Play()
+            .OnComplete(() => 
+            {
+                state = State.Play;
+                StartCoroutine(CountUp());
+            });
+    }
+
+    IEnumerator CountUp()
+    {
+        for (int i = 60; i >= 0; i--)
+        {
+            Timer.text = i.ToString();
+            yield return new WaitForSeconds(1);
+        }
+
+        state = State.Stop;
+        yield return new WaitForSeconds(3);
+
+        GameEnd();
+    }
+
+    public void SceneChange(int changenumber)
+    {
+        SceneManager.LoadScene(changenumber);
     }
 }
