@@ -9,6 +9,7 @@ using TMPro;
 public struct MissonData
 {
     public long misson1, misson2, misson3, openstagenumber, fruit;
+    public string stagenumber;
 }
 public class StageSelectManager : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class StageSelectManager : MonoBehaviour
     //UI
     public GameObject Stagedetail;
     public Text[] Missons;
+    public Image[] Stars;
     public Text StageNumbertext;
     public int release;
 
@@ -69,16 +71,32 @@ public class StageSelectManager : MonoBehaviour
             Debug.Log((long)json["combo"]);
             Debug.Log((long)json["erase"]);
             Debug.Log((long)json["score"]);
+
+            //データ更新
             missonData.misson1 = (long)json["combo"];
             missonData.misson2 = (long)json["erase"];
             missonData.misson3 = (long)json["score"];
             missonData.openstagenumber = (long)json["openstage"];
             missonData.fruit = (long)json["fruit"];
-            StageNumbertext.text = (string)json["stagenumber"];
+            missonData.stagenumber = (string)json["stagenumber"];
+            //表示更新
+            StageNumbertext.text = missonData.stagenumber;
             Missons[0].text = "コンボを" + missonData.misson1 + "達成する";
             Missons[1].text = missonData.misson2 + "個消す";
             Missons[2].text = "スコアを" + missonData.misson3 + "以上獲得する";
 
+            for(int i = 0;i<Stars.Length;i++)
+            {
+                if (PlayerPrefs.HasKey(missonData.stagenumber + i))
+                {
+                    Debug.Log("データが存在する");
+                    Stars[i].color = new Color(255f, 255f, 255f);
+                }
+                else
+                {
+                    Stars[i].color = new Color(0f, 0f, 0f);
+                }
+            }
             Stagedetail.SetActive(true);
             stagedetail = true;
         }

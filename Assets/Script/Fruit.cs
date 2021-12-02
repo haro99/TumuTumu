@@ -7,7 +7,7 @@ public class Fruit : MonoBehaviour
 {
     public GameObject movepos;
     public string fruitname;
-    public bool move;
+    public bool erasing;
     public CircleCollider2D circleCollider;
     public Rigidbody2D RB;
     // Start is called before the first frame update
@@ -19,15 +19,7 @@ public class Fruit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (move)
-        {
-            float range = Vector2.Distance(gameObject.transform.position, movepos.transform.position);
-            if (range < 0.5f)
-                Destroy(gameObject);
 
-            Vector3 distance = movepos.transform.position - gameObject.transform.position;
-            gameObject.transform.position += distance * Time.deltaTime;
-        }
     }
 
     public void Erase()
@@ -37,6 +29,6 @@ public class Fruit : MonoBehaviour
             Destroy(this.gameObject);
         });
 
-
+        erasing = true;
     }
 }
