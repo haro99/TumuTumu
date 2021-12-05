@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5081014861695924362}
   m_Layer: 8
   m_Name: Watermelon
-  m_TagString: Untagged
+  m_TagString: Fruit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133,6 +133,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movepos: {fileID: 0}
   fruitname: Watermelon
-  move: 0
+  erasing: 0
   circleCollider: {fileID: 8657994089253064119}
   RB: {fileID: 7189066289763643908}

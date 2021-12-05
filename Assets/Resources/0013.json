@@ -1,8 +1,8 @@
 {
 	"stagenumber": "1-3",
-    "combo": 5,
-    "erase": 20,
-    "score": 1000,
+    "combo": 6,
+    "erase": 30,
+    "score": 3000,
 	"openstage": 3,
 	"fruit": 4
 }

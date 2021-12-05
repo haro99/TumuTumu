@@ -14,7 +14,7 @@ public enum State
 public class GameManager : MonoBehaviour
 {
     public GameObject[] Fruits;
-
+    public GameObject[] Items;
     [SerializeField]
     private List<GameObject> list = new List<GameObject>();
     public GameObject cam, selectojbect, Drop;
@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public int earnings, score, maxcombo, maxerase, release, openstagenumber, maxfruit;
     public State state;
     public Animator FadeAnimator;
+    public AudioClip[] Clip;
     public Subject<int> ScoreUpdate = new Subject<int>();
     //public string[] names;
 
@@ -32,7 +33,7 @@ public class GameManager : MonoBehaviour
     public Text Score, Timer;
     public Text[] Missons;
     public GameObject[] stars;
-    public GameObject Canvas, Point, Buttons, MissonPanel;
+    public GameObject Message, Canvas, Point, Buttons, MissonPanel;
     // Start is called before the first frame update
     void Start()
     {
@@ -66,30 +67,54 @@ public class GameManager : MonoBehaviour
 
                     if (hit)
                     {
-                        Debug.Log(hit.collider.gameObject);
-                        GameObject obj = hit.collider.gameObject;
-                        Fruit touchFruit = obj.GetComponent<Fruit>();
-
-                        //消滅中じゃないなら
-                        if (!touchFruit.erasing)
+                        if (hit.collider.tag == "Item")
                         {
-                            //初回のくだもの
-                            if (name == "")
+                            GameObject Object = hit.collider.gameObject;
+                            Item Item = Object.GetComponent<Item>();
+                            List<GameObject> GetObjects = Item.list;
+                            Audio.PlayOneShot(Clip[3]);
+                            if (GetObjects.Count > 0)
                             {
-                                list.Add(obj);
-                                selectojbect = obj;
-                                name = touchFruit.fruitname;
-                                obj.transform.localScale = new Vector3(3f, 3f, 3f);
-                            }//一定距離なら
-                            else if (CheckDistance(obj))
+                                int point = 0;
+                                for (int i = 0; i < GetObjects.Count; i++)
+                                {
+                                    GetObjects[i].GetComponent<Fruit>().Erase();
+                                    point += 100;
+                                }
+                                StartCoroutine(FruitSet(GetObjects.Count));
+                                ScoreUpdate.OnNext(point);
+                            }
+                            Destroy(Object);
+                        }
+                        else
+                        {
+                            Debug.Log(hit.collider.gameObject);
+                            GameObject obj = hit.collider.gameObject;
+                            Fruit touchFruit = obj.GetComponent<Fruit>();
+
+                            //消滅中じゃないなら
+                            if (!touchFruit.erasing)
                             {
-                                string getname = touchFruit.fruitname;
-                                //同じ名前でかつゲットリストに登録されてないものなら
-                                if (name == getname && !list.Contains(obj))
+                                //初回のくだもの
+                                if (name == "")
                                 {
                                     list.Add(obj);
+                                    Audio.PlayOneShot(Clip[2]);
                                     selectojbect = obj;
+                                    name = touchFruit.fruitname;
                                     obj.transform.localScale = new Vector3(3f, 3f, 3f);
+                                }//一定距離なら
+                                else if (CheckDistance(obj))
+                                {
+                                    string getname = touchFruit.fruitname;
+                                    //同じ名前でかつゲットリストに登録されてないものなら
+                                    if (name == getname && !list.Contains(obj))
+                                    {
+                                        list.Add(obj);
+                                        Audio.PlayOneShot(Clip[2]);
+                                        selectojbect = obj;
+                                        obj.transform.localScale = new Vector3(3f, 3f, 3f);
+                                    }
                                 }
                             }
                         }
@@ -104,6 +129,7 @@ public class GameManager : MonoBehaviour
                     if (list.Count > 1)
                     {
                         Debug.Log("3個以上揃ってるよ");
+                        Audio.PlayOneShot(Clip[3]);
                         int point = 0;
                         for (int i = 0; i < list.Count; i++)
                         {
@@ -130,6 +156,11 @@ public class GameManager : MonoBehaviour
                         if (maxcombo < list.Count)
                             maxcombo = list.Count;
                         maxerase += list.Count;
+
+                        if(list.Count>5)
+                        {
+                            Instantiate(Items[0], Drop.transform.position + new Vector3(Random.Range(-2, 3), 0, 0), Quaternion.identity);
+                        }
                         list.Clear();
 
                     }
@@ -184,7 +215,7 @@ public class GameManager : MonoBehaviour
     {
         int clearcount = 0;
         var sequence = DOTween.Sequence();
-        sequence.Append(MissonPanel.transform.DOLocalMoveY(-150f, 2f).SetEase(Ease.OutBounce));
+        sequence.Append(MissonPanel.transform.DOLocalMoveY(0f, 2f).SetEase(Ease.OutBounce));
         if (StageSelectManager.missonData.misson1 <= maxcombo)
         {
             clearcount++;
@@ -220,6 +251,10 @@ public class GameManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// スタート処理
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Starting()
     {
         yield return new WaitUntil(() => FadeAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
@@ -232,32 +267,52 @@ public class GameManager : MonoBehaviour
             .OnComplete(() => 
             {
                 state = State.Play;
+                Audio.PlayOneShot(Clip[0]);
                 StartCoroutine(CountUp());
             });
     }
 
+    /// <summary>
+    /// カウントアップ
+    /// </summary>
+    /// <returns></returns>
     IEnumerator CountUp()
     {
+        Message.SetActive(true);
+        yield return new WaitForSeconds(1);
+        Message.SetActive(false);
+
         for (int i = 60; i >= 0; i--)
         {
-            Timer.text = i.ToString();
+            Timer.text = "残り" + i.ToString() + "秒";
             yield return new WaitForSeconds(1);
         }
 
         state = State.Stop;
+        Message.GetComponent<Text>().text = "タイムアップ！";
+        Message.SetActive(true);
+        Audio.PlayOneShot(Clip[1]);
         yield return new WaitForSeconds(3);
-
+        Message.SetActive(false);
         GameEnd();
     }
 
+    /// <summary>
+    /// タッチしたところにポイントを表示
+    /// </summary>
+    /// <param name="point"></param>
     private void PointDisplay(int point)
     {
-        Vector3 position = Camera.main.WorldToScreenPoint(list[list.Count - 1].transform.position);
+        Vector3 position = Input.mousePosition;
         GameObject SetPoint = Instantiate(Point, position, Quaternion.identity, Canvas.transform);
         SetPoint.GetComponent<Text>().text = "+" + point.ToString();
         Destroy(SetPoint, 2f);
     }
 
+    /// <summary>
+    /// スコアの更新
+    /// </summary>
+    /// <param name="point"></param>
     private void ScoreAdd(int point)
     {
         score += point;
