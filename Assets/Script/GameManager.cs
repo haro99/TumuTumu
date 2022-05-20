@@ -5,7 +5,8 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
 using UniRx;
-
+using Firebase;
+using Firebase.Database;
 public enum State
 {
     Stop,
@@ -69,22 +70,13 @@ public class GameManager : MonoBehaviour
                     {
                         if (hit.collider.tag == "Item")
                         {
-                            GameObject Object = hit.collider.gameObject;
-                            Item Item = Object.GetComponent<Item>();
-                            List<GameObject> GetObjects = Item.list;
-                            Audio.PlayOneShot(Clip[3]);
-                            if (GetObjects.Count > 0)
+                            if (list.Count == 0)
                             {
-                                int point = 0;
-                                for (int i = 0; i < GetObjects.Count; i++)
-                                {
-                                    GetObjects[i].GetComponent<Fruit>().Erase();
-                                    point += 100;
-                                }
-                                StartCoroutine(FruitSet(GetObjects.Count));
-                                ScoreUpdate.OnNext(point);
+                                Audio.PlayOneShot(Clip[2]);
+                                GameObject Object = hit.collider.gameObject;
+                                list.Add(Object);
+                                name = "Item";
                             }
-                            Destroy(Object);
                         }
                         else
                         {
@@ -167,6 +159,25 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         Debug.Log("2個未満だよ");
+
+                        if(list[0].tag == "Item")
+                        {
+                            Item Item = list[0].GetComponent<Item>();
+                            List<GameObject> GetObjects = Item.list;
+                            Audio.PlayOneShot(Clip[3]);
+                            if (GetObjects.Count > 0)
+                            {
+                                int point = 0;
+                                for (int i = 0; i < GetObjects.Count; i++)
+                                {
+                                    GetObjects[i].GetComponent<Fruit>().Erase();
+                                    point += 100;
+                                }
+                                StartCoroutine(FruitSet(GetObjects.Count));
+                                ScoreUpdate.OnNext(point);
+                                Destroy(list[0]);
+                            }
+                        }
                         for (int i = 0; i < list.Count; i++)
                         {
                             list[i].transform.localScale = new Vector3(2.5f, 2.5f, 1f);
@@ -246,9 +257,8 @@ public class GameManager : MonoBehaviour
         });
 
         //ミッションをすべてクリアしたら
-        if (clearcount >= 3 && release < openstagenumber)
-            PlayerPrefs.SetInt("release", openstagenumber);
-
+        //if (clearcount >= 3 && release < openstagenumber)
+            DateAdd();
     }
 
     /// <summary>
@@ -322,5 +332,15 @@ public class GameManager : MonoBehaviour
     public void SceneChange(int changenumber)
     {
         SceneManager.LoadScene(changenumber);
+    }
+
+    /// <summary>
+    /// FIrebaseのデータを更新
+    /// </summary>
+    async void DateAdd()
+    {
+        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        await reference.Child(TitleManager.userid).Child("Date").Child("1").SetValueAsync(true);
+
     }
 }
