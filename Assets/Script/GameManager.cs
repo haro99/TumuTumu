@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using DG.Tweening;
-using UniRx;
-using Firebase;
-using Firebase.Database;
+//using DG.Tweening;
+//using UniRx;
+//using Firebase;
+//using Firebase.Database;
 public enum State
 {
     Stop,
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
     public State state;
     public Animator FadeAnimator;
     public AudioClip[] Clip;
-    public Subject<int> ScoreUpdate = new Subject<int>();
+    //public Subject<int> ScoreUpdate = new Subject<int>();
     //public string[] names;
 
     //UI
@@ -38,8 +38,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ScoreUpdate.Subscribe(point => PointDisplay(point));
-        ScoreUpdate.Subscribe(point => ScoreAdd(point));
+        //ScoreUpdate.Subscribe(point => PointDisplay(point));
+        //ScoreUpdate.Subscribe(point => ScoreAdd(point));
         release = PlayerPrefs.GetInt("release");
         Missons[0].text = StageSelectManager.missonData.misson1 + "コンボ以上達成";
         Missons[1].text = StageSelectManager.missonData.misson2 + "個以上消す";
@@ -141,7 +141,7 @@ public class GameManager : MonoBehaviour
 
                         //ポイント更新
                         Debug.Log(point);
-                        ScoreUpdate.OnNext(point);
+                        //ScoreUpdate.OnNext(point);
 
 
                         //Maxコンボ、消した数の処理
@@ -174,7 +174,7 @@ public class GameManager : MonoBehaviour
                                     point += 100;
                                 }
                                 StartCoroutine(FruitSet(GetObjects.Count));
-                                ScoreUpdate.OnNext(point);
+                                //ScoreUpdate.OnNext(point);
                                 Destroy(list[0]);
                             }
                         }
@@ -225,36 +225,36 @@ public class GameManager : MonoBehaviour
     public void GameEnd()
     {
         int clearcount = 0;
-        var sequence = DOTween.Sequence();
-        sequence.Append(MissonPanel.transform.DOLocalMoveY(0f, 2f).SetEase(Ease.OutBounce));
-        if (StageSelectManager.missonData.misson1 <= maxcombo)
-        {
-            clearcount++;
-            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 0, 0);
-            sequence.Append(stars[0].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
-        }
-        if (StageSelectManager.missonData.misson2 <= maxerase)
-        {
-            clearcount++;
-            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 1, 0);
+        //var sequence = DOTween.Sequence();
+        //sequence.Append(MissonPanel.transform.DOLocalMoveY(0f, 2f).SetEase(Ease.OutBounce));
+        //if (StageSelectManager.missonData.misson1 <= maxcombo)
+        //{
+        //    clearcount++;
+        //    PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 0, 0);
+        //    sequence.Append(stars[0].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        //}
+        //if (StageSelectManager.missonData.misson2 <= maxerase)
+        //{
+        //    clearcount++;
+        //    PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 1, 0);
 
-            sequence.Append(stars[1].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
-        }
-        if (StageSelectManager.missonData.misson3 <= score)
-        {
-            clearcount++;
-            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 2, 0);
-            sequence.Append(stars[2].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
-        }
-        sequence.AppendInterval(3f);
+        //    sequence.Append(stars[1].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        //}
+        //if (StageSelectManager.missonData.misson3 <= score)
+        //{
+        //    clearcount++;
+        //    PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 2, 0);
+        //    sequence.Append(stars[2].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        //}
+        //sequence.AppendInterval(3f);
 
-        sequence.Play()
-        .OnComplete(() =>
-        {
-            //完了時に呼ばれる
-            Debug.Log("OnComplete");
-            Buttons.SetActive(true);
-        });
+        //sequence.Play()
+        //.OnComplete(() =>
+        //{
+        //    //完了時に呼ばれる
+        //    Debug.Log("OnComplete");
+        //    Buttons.SetActive(true);
+        //});
 
         //ミッションをすべてクリアしたら
         //if (clearcount >= 3 && release < openstagenumber)
@@ -269,17 +269,17 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitUntil(() => FadeAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
 
-        var sequence = DOTween.Sequence();
+        //var sequence = DOTween.Sequence();
 
-        sequence.AppendInterval(3f);
-        sequence.Append(MissonPanel.transform.DOLocalMoveY(1500f, 2f));
-        sequence.Play()
-            .OnComplete(() => 
-            {
-                state = State.Play;
-                Audio.PlayOneShot(Clip[0]);
-                StartCoroutine(CountUp());
-            });
+        //sequence.AppendInterval(3f);
+        //sequence.Append(MissonPanel.transform.DOLocalMoveY(1500f, 2f));
+        //sequence.Play()
+        //    .OnComplete(() => 
+        //    {
+        //        state = State.Play;
+        //        Audio.PlayOneShot(Clip[0]);
+        //        StartCoroutine(CountUp());
+        //    });
     }
 
     /// <summary>
@@ -339,8 +339,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     async void DateAdd()
     {
-        DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
-        await reference.Child(TitleManager.userid).Child("Date").Child("1").SetValueAsync(true);
+        //DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+        //await reference.Child(TitleManager.userid).Child("Date").Child("1").SetValueAsync(true);
 
     }
 }

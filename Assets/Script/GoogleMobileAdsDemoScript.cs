@@ -1,17 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GoogleMobileAds.Api;
+//using GoogleMobileAds.Api;
 
 public class GoogleMobileAdsDemoScript : MonoBehaviour
 {
-    private BannerView bannerView;
+    //private BannerView bannerView;
 
     // Start is called before the first frame update
     void Start()
     {
         // Initialize the Google Mobile Ads SDK.
-        MobileAds.Initialize(initStatus => { });
+        //MobileAds.Initialize(initStatus => { });
 
         this.RequestBanner();
     }
@@ -27,12 +27,12 @@ public class GoogleMobileAdsDemoScript : MonoBehaviour
 #endif
 
         // Create a 320x50 banner at the top of the screen.
-        this.bannerView = new BannerView(adUnitId, AdSize.SmartBanner, AdPosition.Bottom);
+        //this.bannerView = new BannerView(adUnitId, AdSize.SmartBanner, AdPosition.Bottom);
 
-        // Create an empty ad request.
-        AdRequest request = new AdRequest.Builder().Build();
+        //// Create an empty ad request.
+        //AdRequest request = new AdRequest.Builder().Build();
 
-        // Load the banner with the request.
-        this.bannerView.LoadAd(request);
+        //// Load the banner with the request.
+        //this.bannerView.LoadAd(request);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
+//using DG.Tweening;
 
 public class Cloud : MonoBehaviour
 {
@@ -10,9 +10,9 @@ public class Cloud : MonoBehaviour
     void Start()
     {
 
-        this.transform.DOMove(new Vector3(-10f, transform.position.y, 0), Random.Range(10f, 20f))
-                        .SetLoops(-1, LoopType.Restart)
-                        .SetEase(Ease.Linear);
+        //this.transform.DOMove(new Vector3(-10f, transform.position.y, 0), Random.Range(10f, 20f))
+        //                .SetLoops(-1, LoopType.Restart)
+        //                .SetEase(Ease.Linear);
                       
     }
 

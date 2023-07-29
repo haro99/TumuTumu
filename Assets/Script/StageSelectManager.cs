@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using MiniJSON;
+//using MiniJSON;
 using TMPro;
-using Firebase;
-using Firebase.Database;
-using Firebase.Extensions;
+//using Firebase;
+//using Firebase.Database;
+//using Firebase.Extensions;
 
 public struct MissonData
 {
@@ -29,7 +29,7 @@ public class StageSelectManager : MonoBehaviour
     public Text StageNumbertext;
     public int release;
 
-    public DatabaseReference reference;
+    //public DatabaseReference reference;
 
     private void Awake()
     {
@@ -52,29 +52,29 @@ public class StageSelectManager : MonoBehaviour
             Object.GetComponent<TextMeshProUGUI>().text = "1-" + (i + 1);
         }
 
-        Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-        reference = FirebaseDatabase.DefaultInstance.RootReference;
+        //Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
+        //reference = FirebaseDatabase.DefaultInstance.RootReference;
 
         StageDate date = new StageDate();
         try
         {
-            FirebaseDatabase.DefaultInstance
-              .GetReference("Z0yMnR9lkeOXbMZXFVSlrFzUKch2")
-              .GetValueAsync().ContinueWithOnMainThread(task =>
-              {
-                  if (task.IsFaulted)
-                  {
-                      // Handle the error...
-                  }
-                  else if (task.IsCompleted)
-                  {
-                      DataSnapshot snapshot = task.Result;
-                      // Do something with snapshot...
-                      string json = snapshot.GetRawJsonValue();
-                      Debug.Log(json);
-                      JsonUtility.FromJsonOverwrite(json, date);
-                  }
-              });
+            //FirebaseDatabase.DefaultInstance
+            //  .GetReference("Z0yMnR9lkeOXbMZXFVSlrFzUKch2")
+            //  .GetValueAsync().ContinueWithOnMainThread(task =>
+            //  {
+            //      if (task.IsFaulted)
+            //      {
+            //          // Handle the error...
+            //      }
+            //      else if (task.IsCompleted)
+            //      {
+            //          DataSnapshot snapshot = task.Result;
+            //          // Do something with snapshot...
+            //          string json = snapshot.GetRawJsonValue();
+            //          Debug.Log(json);
+            //          JsonUtility.FromJsonOverwrite(json, date);
+            //      }
+            //  });
         } catch(Exception e)
         {
             Debug.Log(e.Message);
@@ -161,6 +161,6 @@ public class StageSelectManager : MonoBehaviour
 
     public void DebugBtn()
     {
-        reference.Child("Z0yMnR9lkeOXbMZXFVSlrFzUKch2").Child("date").Child("1").SetValueAsync(true);
+        //reference.Child("Z0yMnR9lkeOXbMZXFVSlrFzUKch2").Child("date").Child("1").SetValueAsync(true);
     }
 }
