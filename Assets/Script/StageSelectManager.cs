@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-//using MiniJSON;
+using MiniJSON;
 using TMPro;
 //using Firebase;
 //using Firebase.Database;
@@ -101,46 +101,46 @@ public class StageSelectManager : MonoBehaviour
 
     public void GetStageID(string stageid)
     {
-        //if (!stagedetail)
-        //{
-        //    var textAsset = Resources.Load(stageid) as TextAsset;
-        //    var jsonText = textAsset.text;
+        if (!stagedetail)
+        {
+            var textAsset = Resources.Load(stageid) as TextAsset;
+            var jsonText = textAsset.text;
 
-        //    // 文字列を json に合わせて構成された辞書に変換
-        //    var missionjson = Json.Deserialize(jsonText) as Dictionary<string, object>;
-        //    Debug.Log((string)missionjson["stagenumber"]);
-        //    Debug.Log((long)missionjson["combo"]);
-        //    Debug.Log((long)missionjson["erase"]);
-        //    Debug.Log((long)missionjson["score"]);
+            // 文字列を json に合わせて構成された辞書に変換
+            var missionjson = Json.Deserialize(jsonText) as Dictionary<string, object>;
+            Debug.Log((string)missionjson["stagenumber"]);
+            Debug.Log((long)missionjson["combo"]);
+            Debug.Log((long)missionjson["erase"]);
+            Debug.Log((long)missionjson["score"]);
 
-        //    //データ更新
-        //    missonData.misson1 = (long)missionjson["combo"];
-        //    missonData.misson2 = (long)missionjson["erase"];
-        //    missonData.misson3 = (long)missionjson["score"];
-        //    missonData.openstagenumber = (long)missionjson["openstage"];
-        //    missonData.fruit = (long)missionjson["fruit"];
-        //    missonData.stagenumber = (string)missionjson["stagenumber"];
-        //    //表示更新
-        //    StageNumbertext.text = missonData.stagenumber;
-        //    Missons[0].text = "コンボを" + missonData.misson1 + "達成する";
-        //    Missons[1].text = missonData.misson2 + "個消す";
-        //    Missons[2].text = "スコアを" + missonData.misson3 + "以上獲得する";
+            //データ更新
+            missonData.misson1 = (long)missionjson["combo"];
+            missonData.misson2 = (long)missionjson["erase"];
+            missonData.misson3 = (long)missionjson["score"];
+            missonData.openstagenumber = (long)missionjson["openstage"];
+            missonData.fruit = (long)missionjson["fruit"];
+            missonData.stagenumber = (string)missionjson["stagenumber"];
+            //表示更新
+            StageNumbertext.text = missonData.stagenumber;
+            Missons[0].text = "コンボを" + missonData.misson1 + "達成する";
+            Missons[1].text = missonData.misson2 + "個消す";
+            Missons[2].text = "スコアを" + missonData.misson3 + "以上獲得する";
 
-        //    for (int i = 0; i < Stars.Length; i++)
-        //    {
-        //        if (PlayerPrefs.HasKey(missonData.stagenumber + i))
-        //        {
-        //            Debug.Log("データが存在する");
-        //            Stars[i].color = new Color(255f, 255f, 255f);
-        //        }
-        //        else
-        //        {
-        //            Stars[i].color = new Color(0f, 0f, 0f);
-        //        }
-        //    }
-        Stagedetail.SetActive(true);
-        //    stagedetail = true;
-        //}
+            for (int i = 0; i < Stars.Length; i++)
+            {
+                if (PlayerPrefs.HasKey(missonData.stagenumber + i))
+                {
+                    Debug.Log("データが存在する");
+                    Stars[i].color = new Color(255f, 255f, 255f);
+                }
+                else
+                {
+                    Stars[i].color = new Color(0f, 0f, 0f);
+                }
+            }
+            Stagedetail.SetActive(true);
+            stagedetail = true;
+        }
     }
 
     public void Decision()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-//using DG.Tweening;
+using DG.Tweening;
 //using UniRx;
 //using Firebase;
 //using Firebase.Database;
@@ -225,39 +225,39 @@ public class GameManager : MonoBehaviour
     public void GameEnd()
     {
         int clearcount = 0;
-        //var sequence = DOTween.Sequence();
-        //sequence.Append(MissonPanel.transform.DOLocalMoveY(0f, 2f).SetEase(Ease.OutBounce));
-        //if (StageSelectManager.missonData.misson1 <= maxcombo)
-        //{
-        //    clearcount++;
-        //    PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 0, 0);
-        //    sequence.Append(stars[0].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
-        //}
-        //if (StageSelectManager.missonData.misson2 <= maxerase)
-        //{
-        //    clearcount++;
-        //    PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 1, 0);
+        var sequence = DOTween.Sequence();
+        sequence.Append(MissonPanel.transform.DOLocalMoveY(0f, 2f).SetEase(Ease.OutBounce));
+        if (StageSelectManager.missonData.misson1 <= maxcombo)
+        {
+            clearcount++;
+            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 0, 0);
+            sequence.Append(stars[0].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        }
+        if (StageSelectManager.missonData.misson2 <= maxerase)
+        {
+            clearcount++;
+            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 1, 0);
 
-        //    sequence.Append(stars[1].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
-        //}
-        //if (StageSelectManager.missonData.misson3 <= score)
-        //{
-        //    clearcount++;
-        //    PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 2, 0);
-        //    sequence.Append(stars[2].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
-        //}
-        //sequence.AppendInterval(3f);
+            sequence.Append(stars[1].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        }
+        if (StageSelectManager.missonData.misson3 <= score)
+        {
+            clearcount++;
+            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 2, 0);
+            sequence.Append(stars[2].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
+        }
+        sequence.AppendInterval(3f);
 
-        //sequence.Play()
-        //.OnComplete(() =>
-        //{
-        //    //完了時に呼ばれる
-        //    Debug.Log("OnComplete");
-        //    Buttons.SetActive(true);
-        //});
+        sequence.Play()
+        .OnComplete(() =>
+        {
+            //完了時に呼ばれる
+            Debug.Log("OnComplete");
+            Buttons.SetActive(true);
+        });
 
         //ミッションをすべてクリアしたら
-        //if (clearcount >= 3 && release < openstagenumber)
+        if (clearcount >= 3 && release < openstagenumber)
             DateAdd();
     }
 
