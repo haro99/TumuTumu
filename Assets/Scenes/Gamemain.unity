@@ -2004,10 +2004,11 @@ MonoBehaviour:
   state: 0
   FadeAnimator: {fileID: 715133785}
   Clip:
-  - {fileID: 8300000, guid: 1693f87756212bf4b85b56f408852174, type: 3}
-  - {fileID: 8300000, guid: 53ddad1913b275c4786eb59f7fcb8023, type: 3}
-  - {fileID: 8300000, guid: 5877062d295855d45b03ca15dffed45d, type: 3}
-  - {fileID: 8300000, guid: c6d9b16a70a445f4997c09f8c9a1001d, type: 3}
+  - {fileID: 8300000, guid: 482bbe264befad146b0aabbab2dcd92f, type: 3}
+  - {fileID: 8300000, guid: 2ce3af51d468f9c47bb9d89787acacb1, type: 3}
+  - {fileID: 8300000, guid: 88b40be9d66aeb0439e76eedca3c7ae8, type: 3}
+  - {fileID: 8300000, guid: d0f5acbf1a9ffe94cba2795b562ba8f5, type: 3}
+  names: []
   Score: {fileID: 1841797301}
   Timer: {fileID: 979224459}
   Missons:

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using DG.Tweening;
+using DG.Tweening;
 
 public class Fruit : MonoBehaviour
 {
@@ -24,10 +24,10 @@ public class Fruit : MonoBehaviour
 
     public void Erase()
     {
-        //this.transform.DOScale(new Vector3(0, 0, 0), 0.5f).OnComplete(() =>
-        //{
-        //    Destroy(this.gameObject);
-        //});
+        this.transform.DOScale(new Vector3(0, 0, 0), 0.5f).OnComplete(() =>
+        {
+            Destroy(this.gameObject);
+        });
 
         erasing = true;
     }

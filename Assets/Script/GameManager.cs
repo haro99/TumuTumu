@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
-//using UniRx;
+using UniRx;
 //using Firebase;
 //using Firebase.Database;
 public enum State
@@ -27,20 +27,23 @@ public class GameManager : MonoBehaviour
     public State state;
     public Animator FadeAnimator;
     public AudioClip[] Clip;
-    //public Subject<int> ScoreUpdate = new Subject<int>();
-    //public string[] names;
+    public Subject<int> ScoreUpdate = new Subject<int>();
+    public string[] names;
+    public StageDate data;
 
     //UI
     public Text Score, Timer;
     public Text[] Missons;
     public GameObject[] stars;
     public GameObject Message, Canvas, Point, Buttons, MissonPanel;
+
     // Start is called before the first frame update
     void Start()
     {
-        //ScoreUpdate.Subscribe(point => PointDisplay(point));
-        //ScoreUpdate.Subscribe(point => ScoreAdd(point));
+        ScoreUpdate.Subscribe(point => PointDisplay(point));
+        ScoreUpdate.Subscribe(point => ScoreAdd(point));
         release = PlayerPrefs.GetInt("release");
+        Debug.Log(StageSelectManager.missonData.stagenumber);
         Missons[0].text = StageSelectManager.missonData.misson1 + "コンボ以上達成";
         Missons[1].text = StageSelectManager.missonData.misson2 + "個以上消す";
         Missons[2].text = "スコアで" + StageSelectManager.missonData.misson3 + "点以上獲得する";
@@ -48,6 +51,8 @@ public class GameManager : MonoBehaviour
         maxfruit = (int)StageSelectManager.missonData.fruit;
         StartCoroutine(FruitSet(25));
         StartCoroutine(Starting());
+
+        data = JsonUtility.FromJson<StageDate>(PlayerPrefs.GetString("StageData"));
     }
 
     // Update is called once per frame
@@ -141,7 +146,7 @@ public class GameManager : MonoBehaviour
 
                         //ポイント更新
                         Debug.Log(point);
-                        //ScoreUpdate.OnNext(point);
+                        ScoreUpdate.OnNext(point);
 
 
                         //Maxコンボ、消した数の処理
@@ -230,20 +235,20 @@ public class GameManager : MonoBehaviour
         if (StageSelectManager.missonData.misson1 <= maxcombo)
         {
             clearcount++;
-            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 0, 0);
+            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + "-" + 0, 0);
             sequence.Append(stars[0].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
         }
         if (StageSelectManager.missonData.misson2 <= maxerase)
         {
             clearcount++;
-            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 1, 0);
+            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + "-" + 1, 0);
 
             sequence.Append(stars[1].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
         }
         if (StageSelectManager.missonData.misson3 <= score)
         {
             clearcount++;
-            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + 2, 0);
+            PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + "-" + 2, 0);
             sequence.Append(stars[2].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
         }
         sequence.AppendInterval(3f);
@@ -255,10 +260,18 @@ public class GameManager : MonoBehaviour
             Debug.Log("OnComplete");
             Buttons.SetActive(true);
         });
+        data.date[StageSelectManager.missonData.openstagenumber] = true;
+        foreach(var a in data.date)
+        {
+            Debug.Log(a);
+        }
+        string json = JsonUtility.ToJson(data);
+        Debug.Log(json);
+        PlayerPrefs.SetString("StageData", json);
 
         //ミッションをすべてクリアしたら
-        if (clearcount >= 3 && release < openstagenumber)
-            DateAdd();
+        //if (clearcount >= 3 && release < openstagenumber)
+        DateAdd();
     }
 
     /// <summary>
@@ -269,17 +282,17 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitUntil(() => FadeAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
 
-        //var sequence = DOTween.Sequence();
+        var sequence = DOTween.Sequence();
 
-        //sequence.AppendInterval(3f);
-        //sequence.Append(MissonPanel.transform.DOLocalMoveY(1500f, 2f));
-        //sequence.Play()
-        //    .OnComplete(() => 
-        //    {
-        //        state = State.Play;
-        //        Audio.PlayOneShot(Clip[0]);
-        //        StartCoroutine(CountUp());
-        //    });
+        sequence.AppendInterval(3f);
+        sequence.Append(MissonPanel.transform.DOLocalMoveY(1500f, 2f));
+        sequence.Play()
+            .OnComplete(() =>
+            {
+                state = State.Play;
+                Audio.PlayOneShot(Clip[0]);
+                StartCoroutine(CountUp());
+            });
     }
 
     /// <summary>

@@ -21,6 +21,7 @@ public class StageSelectManager : MonoBehaviour
     public GameObject[] StageMas;
     public static MissonData missonData = new MissonData();
     public bool stagedetail;
+    public StageDate date;
 
     //UI
     public GameObject Stagedetail;
@@ -55,7 +56,7 @@ public class StageSelectManager : MonoBehaviour
         //Firebase.Auth.FirebaseAuth auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
         //reference = FirebaseDatabase.DefaultInstance.RootReference;
 
-        StageDate date = new StageDate();
+        //StageDate date = new StageDate();
         try
         {
             //FirebaseDatabase.DefaultInstance
@@ -80,16 +81,21 @@ public class StageSelectManager : MonoBehaviour
             Debug.Log(e.Message);
         }
 
-        Debug.Log(date.date.Length);
+        string json = PlayerPrefs.GetString("StageData");
+        Debug.Log(json);
+        date = JsonUtility.FromJson<StageDate>(json);
+
+        //Debug.Log(date.date.Length);
+        // ステージボタン開放判定処理
         for (int i = 0; i < date.date.Length; i++)
         {
-            
+            Debug.Log(date.date[i]);
             if (date.date[i] == true)
             {
                 StageMas[i].GetComponent<CircleCollider2D>().enabled = true;
                 StageMas[i].GetComponent<SpriteRenderer>().color = new Color(255f, 255, 255f);
             }
-            
+
         }
     }
 
@@ -126,9 +132,10 @@ public class StageSelectManager : MonoBehaviour
             Missons[1].text = missonData.misson2 + "個消す";
             Missons[2].text = "スコアを" + missonData.misson3 + "以上獲得する";
 
+            //クリアデータがあったらスターを付ける
             for (int i = 0; i < Stars.Length; i++)
             {
-                if (PlayerPrefs.HasKey(missonData.stagenumber + i))
+                if (PlayerPrefs.HasKey(missonData.stagenumber + "-" + i))
                 {
                     Debug.Log("データが存在する");
                     Stars[i].color = new Color(255f, 255f, 255f);

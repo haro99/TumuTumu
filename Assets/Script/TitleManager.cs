@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 //using Firebase.Auth;
 //using Firebase;
 //using Firebase.Database;
+[Serializable]
 public class StageDate
 {
     public bool[] date = new bool[5];
@@ -98,7 +100,7 @@ public class TitleManager : MonoBehaviour
         StageDate date = new StageDate();
         date.date[0] = true;
         string json = JsonUtility.ToJson(date);
-
+        PlayerPrefs.SetString("StageData", json);
         Debug.Log("制作中…");
         //await reference.Child(_user.UserId).SetRawJsonValueAsync(json);
 
