@@ -17,10 +17,11 @@ public struct MissonData
 }
 public class StageSelectManager : MonoBehaviour
 {
+    [Tooltip("UIオブジェクト")]
     public GameObject Canvas, StageNumber;
-    public GameObject[] StageMas;
+    public GameObject[] StageMas;   //　ステージマスUI
     public static MissonData missonData = new MissonData();
-    public bool stagedetail;
+    public bool stagedetail;        //　ステージ詳細表示中か？
     public StageDate date;
 
     //UI
@@ -50,6 +51,7 @@ public class StageSelectManager : MonoBehaviour
         {
             Vector3 position = Camera.main.WorldToScreenPoint(StageMas[i].transform.position);
             GameObject Object = Instantiate(StageNumber, position + new Vector3(0, 30f), Quaternion.identity, Canvas.transform);
+            // ステージのマスにステージUIを配置
             Object.GetComponent<TextMeshProUGUI>().text = "1-" + (i + 1);
         }
 
@@ -90,6 +92,7 @@ public class StageSelectManager : MonoBehaviour
         for (int i = 0; i < date.date.Length; i++)
         {
             Debug.Log(date.date[i]);
+            //　開放ステージか？
             if (date.date[i] == true)
             {
                 StageMas[i].GetComponent<CircleCollider2D>().enabled = true;
@@ -105,6 +108,10 @@ public class StageSelectManager : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// ステージ詳細の表示
+    /// </summary>
+    /// <param name="stageid"></param>
     public void GetStageID(string stageid)
     {
         if (!stagedetail)
@@ -145,21 +152,31 @@ public class StageSelectManager : MonoBehaviour
                     Stars[i].color = new Color(0f, 0f, 0f);
                 }
             }
+            //　詳細を表示する
             Stagedetail.SetActive(true);
             stagedetail = true;
         }
     }
 
+    /// <summary>
+    /// ゲームへ
+    /// </summary>
     public void Decision()
     {
         SceneManager.LoadScene(2);
     }
 
+    /// <summary>
+    /// 詳細を閉じる
+    /// </summary>
     public void Close()
     {
         stagedetail = false;
     }
 
+    /// <summary>
+    /// ステージデータをクリア
+    /// </summary>
     public void dataClear()
     {
         PlayerPrefs.DeleteAll();

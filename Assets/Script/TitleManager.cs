@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 //using Firebase.Auth;
 //using Firebase;
 //using Firebase.Database;
+
+// 各ステージの開放フラグ
 [Serializable]
 public class StageDate
 {
@@ -14,7 +16,7 @@ public class StageDate
 public class TitleManager : MonoBehaviour
 {
     public Animator FadeAnimator;
-    public static string userid;
+    public static string userid;    //　ユーザーのID
     //FirebaseAuth _auth;
     //DatabaseReference reference;
     //FirebaseUser _user;
@@ -77,12 +79,18 @@ public class TitleManager : MonoBehaviour
         //    callback(true);
         //});
     }
-
+    /// <summary>
+    /// フェード開始コルーチン呼び出し
+    /// </summary>
     public void Fade()
     {
         StartCoroutine(FadeIn());
     }
 
+    /// <summary>
+    /// フェード処理
+    /// </summary>
+    /// <returns></returns>
     IEnumerator FadeIn()
     {
         FadeAnimator.SetTrigger("In");
@@ -93,6 +101,9 @@ public class TitleManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// ユーザー情報新規作成
+    /// </summary>
     public async void CreateUserDate()
     {
 
