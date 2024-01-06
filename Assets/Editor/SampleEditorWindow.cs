@@ -20,6 +20,7 @@ public class SampleEditorWindow : EditorWindow
     [MenuItem("StageData/Create")]
     private static void Open()
     {
+        string path = Application.dataPath;
         TextAsset csvFile = Resources.Load("StageData_m") as TextAsset; // Resources‚É‚ ‚éCSVƒtƒ@ƒCƒ‹‚ðŠi”[
         StringReader reader = new StringReader(csvFile.text); // TextAsset‚ðStringReader‚É•ÏŠ·
 
@@ -35,6 +36,7 @@ public class SampleEditorWindow : EditorWindow
                 StageMission mission = new StageMission(int.Parse(StageData[0]), int.Parse(StageData[1]), int.Parse(StageData[2]));
                 string json = JsonUtility.ToJson(mission);
                 Debug.Log(json);
+                File.Create(path + "/Resources" + "Sample" + count + ".json");
             }
             count++;
         }
