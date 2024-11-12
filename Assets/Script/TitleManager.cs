@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 //using Firebase.Auth;
 //using Firebase;
@@ -57,6 +58,12 @@ public class TitleManager : MonoBehaviour
 
         // Get the root reference location of the database.
         //reference = FirebaseDatabase.DefaultInstance.RootReference;
+
+        APIManager apimanager = new APIManager();
+
+        apimanager.CommandSetting();
+        apimanager.IndexAPI("CreateUser");
+        apimanager.Execute();
     }
     public void Create(CreateUser callback)
     {
@@ -78,6 +85,7 @@ public class TitleManager : MonoBehaviour
         //    Debug.Log($"User signed in successfully: {_user.DisplayName} ({_user.UserId})");
         //    callback(true);
         //});
+
     }
     /// <summary>
     /// フェード開始コルーチン呼び出し
@@ -99,6 +107,21 @@ public class TitleManager : MonoBehaviour
 
         SceneManager.LoadScene(1);
 
+    }
+
+    IEnumerator CreateID()
+    {
+        UnityWebRequest req = UnityWebRequest.Get(env.URL + "/api/tumutumu/create");
+        yield return req.SendWebRequest();
+
+        if (req.isNetworkError || req.isHttpError)
+        {
+            Debug.Log(req.error);
+        }
+        else if (req.responseCode == 200)
+        {
+            Debug.Log(req.downloadHandler.text);
+        }
     }
 
     /// <summary>
