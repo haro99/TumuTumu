@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using MiniJSON;
 using TMPro;
+using UnityEditor.XR;
 //using Firebase;
 //using Firebase.Database;
 //using Firebase.Extensions;
@@ -17,36 +18,44 @@ public struct MissonData
 }
 public class StageSelectManager : MonoBehaviour
 {
+    public static StageSelectManager stageSelectManager;
+
     [Tooltip("UIオブジェクト")]
     public GameObject Canvas, StageNumber;
     public GameObject[] StageMas;   //　ステージマスUI
     public static MissonData missonData = new MissonData();
     public bool stagedetail;        //　ステージ詳細表示中か？
     public StageDate date;
-
+    
     //UI
     public GameObject Stagedetail;
     public Text[] Missons;
     public Image[] Stars;
     public Text StageNumbertext;
     public int release;
+    public static int selectnumber;
 
     //public DatabaseReference reference;
 
     private void Awake()
     {
-        if (PlayerPrefs.HasKey("release"))
-        {
-            release = PlayerPrefs.GetInt("release");
-        }
-        else
-            release = 0;
+        //if (PlayerPrefs.HasKey("release"))
+        //{
+        //    release = PlayerPrefs.GetInt("release");
+        //}
+        //else
+        //    release = 0;
 
-        Debug.Log(release);
+        //Debug.Log(release);
     }
     // Start is called before the first frame update
     void Start()
     {
+        stageSelectManager = this;
+
+        APIManager.apimanager.IndexAPI("StageData");
+        APIManager.apimanager.Execute();
+
         for (int i = 0; i < StageMas.Length; i++)
         {
             Vector3 position = Camera.main.WorldToScreenPoint(StageMas[i].transform.position);
@@ -83,17 +92,33 @@ public class StageSelectManager : MonoBehaviour
             Debug.Log(e.Message);
         }
 
-        string json = PlayerPrefs.GetString("StageData");
-        Debug.Log(json);
-        date = JsonUtility.FromJson<StageDate>(json);
+        //string json = PlayerPrefs.GetString("StageData");
+        //Debug.Log(json);
+        //date = JsonUtility.FromJson<StageDate>(json);
 
-        //Debug.Log(date.date.Length);
+        ////Debug.Log(date.date.Length);
+        //// ステージボタン開放判定処理
+        //for (int i = 0; i < date.date.Length; i++)
+        //{
+        //    Debug.Log(date.date[i]);
+        //    //　開放ステージか？
+        //    if (date.date[i] == true)
+        //    {
+        //        StageMas[i].GetComponent<CircleCollider2D>().enabled = true;
+        //        StageMas[i].GetComponent<SpriteRenderer>().color = new Color(255f, 255, 255f);
+        //    }
+
+        //}
+    }
+
+    public void StageOpen(bool[] OpenData)
+    {
         // ステージボタン開放判定処理
-        for (int i = 0; i < date.date.Length; i++)
+        for (int i = 0; i < OpenData.Length; i++)
         {
             Debug.Log(date.date[i]);
             //　開放ステージか？
-            if (date.date[i] == true)
+            if (OpenData[i] == true)
             {
                 StageMas[i].GetComponent<CircleCollider2D>().enabled = true;
                 StageMas[i].GetComponent<SpriteRenderer>().color = new Color(255f, 255, 255f);
@@ -116,6 +141,8 @@ public class StageSelectManager : MonoBehaviour
     {
         if (!stagedetail)
         {
+            selectnumber = int.Parse(stageid);
+            selectnumber %= 10;
             var textAsset = Resources.Load(stageid) as TextAsset;
             var jsonText = textAsset.text;
 
@@ -139,23 +166,65 @@ public class StageSelectManager : MonoBehaviour
             Missons[1].text = missonData.misson2 + "個消す";
             Missons[2].text = "スコアを" + missonData.misson3 + "以上獲得する";
 
+            APIManager.apimanager.IndexAPI("StageDetail");
+            APIManager.apimanager.Execute();
+
             //クリアデータがあったらスターを付ける
-            for (int i = 0; i < Stars.Length; i++)
-            {
-                if (PlayerPrefs.HasKey(missonData.stagenumber + "-" + i))
-                {
-                    Debug.Log("データが存在する");
-                    Stars[i].color = new Color(255f, 255f, 255f);
-                }
-                else
-                {
-                    Stars[i].color = new Color(0f, 0f, 0f);
-                }
-            }
-            //　詳細を表示する
-            Stagedetail.SetActive(true);
-            stagedetail = true;
+            //for (int i = 0; i < Stars.Length; i++)
+            //{
+            //    if (PlayerPrefs.HasKey(missonData.stagenumber + "-" + i))
+            //    {
+            //        Debug.Log("データが存在する");
+            //        Stars[i].color = new Color(255f, 255f, 255f);
+            //    }
+            //    else
+            //    {
+            //        Stars[i].color = new Color(0f, 0f, 0f);
+            //    }
+            //}
+            ////　詳細を表示する
+            //Stagedetail.SetActive(true);
+            //stagedetail = true;
         }
+    }
+
+    public void StageDetailShow(StageData stageData)
+    {
+        //クリアデータがあったらスターを付ける
+
+        if (stageData.stagedata.mission1 == true)
+        {
+            Debug.Log("データが存在する");
+            Stars[0].color = new Color(255f, 255f, 255f);
+        }
+        else
+        {
+            Stars[0].color = new Color(0f, 0f, 0f);
+        }
+
+        if (stageData.stagedata.mission2 == true)
+        {
+            Debug.Log("データが存在する");
+            Stars[1].color = new Color(255f, 255f, 255f);
+        }
+        else
+        {
+            Stars[1].color = new Color(0f, 0f, 0f);
+        }
+
+        if (stageData.stagedata.mission3 == true)
+        {
+            Debug.Log("データが存在する");
+            Stars[2].color = new Color(255f, 255f, 255f);
+        }
+        else
+        {
+            Stars[2].color = new Color(0f, 0f, 0f);
+        }
+
+        //　詳細を表示する
+        Stagedetail.SetActive(true);
+        stagedetail = true;
     }
 
     /// <summary>

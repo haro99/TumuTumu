@@ -10,18 +10,31 @@ public class APIManager : MonoBehaviour
 
     public static APIManager apimanager;
 
-    public APIManager()
+    private void Start()
     {
-        apimanager = this;
+        if (apimanager == null)
+        {
+            apimanager = this;
+            DontDestroyOnLoad(gameObject);
+            CommandSetting();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void CommandSetting()
     {
         APIlist.Add("CreateUser", new CreateUserAPI());
+        APIlist.Add("StageData", new StageDataShow());
+        APIlist.Add("StageDetail", new StageDateDetail());
+        APIlist.Add("DataUpdate", new DataUpdate());
     }
 
     public void IndexAPI(string name)
     {
+        Debug.Log(APIlist.Count);
         SelectAPI = APIlist[name];
     }
 

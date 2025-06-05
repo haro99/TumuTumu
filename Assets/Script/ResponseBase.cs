@@ -34,11 +34,11 @@ public class CreateUser:ResponseBase
 [Serializable]
 public class StageData:ResponseBase
 {
-    public Stagedata Stagedata;
+    public Stagedata stagedata;
 }
 
 [Serializable]
-public class Stagedatas:ResponseBase
+public class StageDatas:ResponseBase
 {
     public bool[] open;
 }

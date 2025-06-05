@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-public class GameDataManager
+public static class GameDataManager
 {
-    public static GameDataManager gameDataManager;
 
-    public string UserID;
-    
-    public GameDataManager()
-    {  
-        gameDataManager = new GameDataManager();
-    }
+    private static string userID;
+
+    public static Stagedata StageData;
+
+    public static string UserID {  get { return userID; } set { userID = value; } }
 
 }

@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     public Subject<int> ScoreUpdate = new Subject<int>();
     public string[] names;
     public StageDate data;
+    public Stagedata RequestData;
 
     //UI
     public Text Score, Timer;
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(StageSelectManager.selectnumber);
         ScoreUpdate.Subscribe(point => PointDisplay(point));
         ScoreUpdate.Subscribe(point => ScoreAdd(point));
         release = PlayerPrefs.GetInt("release");
@@ -229,17 +231,24 @@ public class GameManager : MonoBehaviour
     //ゲーム終了語のリザルト
     public void GameEnd()
     {
+        GameDataManager.StageData = new Stagedata();
+        GameDataManager.StageData.stagenumber = StageSelectManager.selectnumber.ToString();
+        GameDataManager.StageData.tumutumu_id = GameDataManager.UserID;
+
+
         int clearcount = 0;
         var sequence = DOTween.Sequence();
         sequence.Append(MissonPanel.transform.DOLocalMoveY(0f, 2f).SetEase(Ease.OutBounce));
         if (StageSelectManager.missonData.misson1 <= maxcombo)
         {
+            GameDataManager.StageData.mission1 = true;
             clearcount++;
             PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + "-" + 0, 0);
             sequence.Append(stars[0].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
         }
         if (StageSelectManager.missonData.misson2 <= maxerase)
         {
+            GameDataManager.StageData.mission2 = true;
             clearcount++;
             PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + "-" + 1, 0);
 
@@ -247,6 +256,7 @@ public class GameManager : MonoBehaviour
         }
         if (StageSelectManager.missonData.misson3 <= score)
         {
+            GameDataManager.StageData.mission3 = true;
             clearcount++;
             PlayerPrefs.SetInt(StageSelectManager.missonData.stagenumber + "-" + 2, 0);
             sequence.Append(stars[2].transform.DOScale(new Vector3(1, 1, 1), 1f).SetEase(Ease.OutBack));
@@ -271,7 +281,10 @@ public class GameManager : MonoBehaviour
 
         //ミッションをすべてクリアしたら
         //if (clearcount >= 3 && release < openstagenumber)
-        DateAdd();
+        //DateAdd();
+
+        APIManager.apimanager.IndexAPI("DataUpdate");
+        APIManager.apimanager.Execute();
     }
 
     /// <summary>

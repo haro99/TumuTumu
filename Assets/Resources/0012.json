@@ -4,5 +4,6 @@
     "erase": 30,
     "score": 11000,
 	"openstage": 2,
-	"fruit": 3
+	"fruit": 3,
+    "stageid": 2
 }
