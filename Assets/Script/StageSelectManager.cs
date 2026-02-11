@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using MiniJSON;
 using TMPro;
-using UnityEditor.XR;
 //using Firebase;
 //using Firebase.Database;
 //using Firebase.Extensions;

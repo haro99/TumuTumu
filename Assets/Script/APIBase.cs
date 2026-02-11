@@ -4,7 +4,6 @@ using UnityEngine;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using UnityEditor.PackageManager.Requests;
 
 /// <summary>
 /// APIでの通信のベースクラス
