@@ -38,12 +38,13 @@ public class StageSelectManager : MonoBehaviour
 
     private void Awake()
     {
-        //if (PlayerPrefs.HasKey("release"))
-        //{
-        //    release = PlayerPrefs.GetInt("release");
-        //}
-        //else
-        //    release = 0;
+        // ローカル保存用
+        if (PlayerPrefs.HasKey("release"))
+        {
+            release = PlayerPrefs.GetInt("release");
+        }
+        else
+            release = 0;
 
         //Debug.Log(release);
     }
@@ -52,8 +53,8 @@ public class StageSelectManager : MonoBehaviour
     {
         stageSelectManager = this;
 
-        APIManager.apimanager.IndexAPI("StageData");
-        APIManager.apimanager.Execute();
+        //APIManager.apimanager.IndexAPI("StageData");
+        //APIManager.apimanager.Execute();
 
         for (int i = 0; i < StageMas.Length; i++)
         {
@@ -91,23 +92,24 @@ public class StageSelectManager : MonoBehaviour
             Debug.Log(e.Message);
         }
 
-        //string json = PlayerPrefs.GetString("StageData");
-        //Debug.Log(json);
-        //date = JsonUtility.FromJson<StageDate>(json);
+        string json = PlayerPrefs.GetString("StageData");
+        Debug.Log(json);
+        date = JsonUtility.FromJson<StageDate>(json);
 
-        ////Debug.Log(date.date.Length);
-        //// ステージボタン開放判定処理
-        //for (int i = 0; i < date.date.Length; i++)
-        //{
-        //    Debug.Log(date.date[i]);
-        //    //　開放ステージか？
-        //    if (date.date[i] == true)
-        //    {
-        //        StageMas[i].GetComponent<CircleCollider2D>().enabled = true;
-        //        StageMas[i].GetComponent<SpriteRenderer>().color = new Color(255f, 255, 255f);
-        //    }
+        Debug.Log(date.date.Length);
 
-        //}
+        // ステージボタン開放判定処理
+        for (int i = 0; i < date.date.Length; i++)
+        {
+            Debug.Log(date.date[i]);
+            //　開放ステージか？
+            if (date.date[i] == true)
+            {
+                StageMas[i].GetComponent<CircleCollider2D>().enabled = true;
+                StageMas[i].GetComponent<SpriteRenderer>().color = new Color(255f, 255, 255f);
+            }
+
+        }
     }
 
     public void StageOpen(bool[] OpenData)

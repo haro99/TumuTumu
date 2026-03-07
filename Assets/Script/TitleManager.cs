@@ -59,12 +59,14 @@ public class TitleManager : MonoBehaviour
         // Get the root reference location of the database.
         //reference = FirebaseDatabase.DefaultInstance.RootReference;
         APIManager.apimanager = new APIManager();
+        APIManager.apimanager.CommandSetting();
 
 
         if (!PlayerPrefs.HasKey("userid"))
         {
-            APIManager.apimanager.IndexAPI("CreateUser");
-            APIManager. apimanager.Execute();
+            //APIManager.apimanager.IndexAPI("CreateUser");
+            //APIManager.apimanager.Execute();
+            CreateUserDate();
         }
         else
         {

@@ -16,7 +16,7 @@ public class APIManager : MonoBehaviour
         {
             apimanager = this;
             DontDestroyOnLoad(gameObject);
-            CommandSetting();
+            //CommandSetting();
         }
         else
         {
@@ -30,12 +30,14 @@ public class APIManager : MonoBehaviour
         APIlist.Add("StageData", new StageDataShow());
         APIlist.Add("StageDetail", new StageDateDetail());
         APIlist.Add("DataUpdate", new DataUpdate());
+        Debug.Log("APIセッティング");
     }
 
     public void IndexAPI(string name)
     {
         // TODO 原因はここ、コマンドが登録されていなくユーザーデータ登録が作れない
         Debug.Log(APIlist.Count);
+        Debug.Log(name);
         SelectAPI = APIlist[name];
     }
 
