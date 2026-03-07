@@ -34,6 +34,7 @@ public class APIManager : MonoBehaviour
 
     public void IndexAPI(string name)
     {
+        // TODO 原因はここ、コマンドが登録されていなくユーザーデータ登録が作れない
         Debug.Log(APIlist.Count);
         SelectAPI = APIlist[name];
     }
