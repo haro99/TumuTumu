@@ -35,10 +35,10 @@ public class APIManager : MonoBehaviour
 
     public void IndexAPI(string name)
     {
-        // TODO 原因はここ、コマンドが登録されていなくユーザーデータ登録が作れない
+        // TODO オンラインデータ保存からローカル保存に変更
         Debug.Log(APIlist.Count);
         Debug.Log(name);
-        SelectAPI = APIlist[name];
+        //SelectAPI = APIlist[name];
     }
 
     public async void Execute()

@@ -281,10 +281,11 @@ public class GameManager : MonoBehaviour
 
         //ミッションをすべてクリアしたら
         //if (clearcount >= 3 && release < openstagenumber)
-        //DateAdd();
+        //    DateAdd();
 
-        APIManager.apimanager.IndexAPI("DataUpdate");
-        APIManager.apimanager.Execute();
+        // 通信してデータを送る
+        //APIManager.apimanager.IndexAPI("DataUpdate");
+        //APIManager.apimanager.Execute();
     }
 
     /// <summary>

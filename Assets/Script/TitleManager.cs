@@ -67,6 +67,13 @@ public class TitleManager : MonoBehaviour
             //APIManager.apimanager.IndexAPI("CreateUser");
             //APIManager.apimanager.Execute();
             CreateUserDate();
+
+            //Guidの構造体生成
+            Guid guid = Guid.NewGuid();
+
+            //生成されたGUIDを確認
+            Debug.Log("GUID : " + guid.ToString());
+            PlayerPrefs.SetString("userid", guid.ToString());
         }
         else
         {

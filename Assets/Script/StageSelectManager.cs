@@ -167,25 +167,27 @@ public class StageSelectManager : MonoBehaviour
             Missons[1].text = missonData.misson2 + "個消す";
             Missons[2].text = "スコアを" + missonData.misson3 + "以上獲得する";
 
-            APIManager.apimanager.IndexAPI("StageDetail");
-            APIManager.apimanager.Execute();
+            // 通信をしてデータを取得する
+            //APIManager.apimanager.IndexAPI("StageDetail");
+            //APIManager.apimanager.Execute();
 
-            //クリアデータがあったらスターを付ける
-            //for (int i = 0; i < Stars.Length; i++)
-            //{
-            //    if (PlayerPrefs.HasKey(missonData.stagenumber + "-" + i))
-            //    {
-            //        Debug.Log("データが存在する");
-            //        Stars[i].color = new Color(255f, 255f, 255f);
-            //    }
-            //    else
-            //    {
-            //        Stars[i].color = new Color(0f, 0f, 0f);
-            //    }
-            //}
-            ////　詳細を表示する
-            //Stagedetail.SetActive(true);
-            //stagedetail = true;
+            // ローカルからデータを取得
+            // クリアデータがあったらスターを付ける
+            for (int i = 0; i < Stars.Length; i++)
+            {
+                if (PlayerPrefs.HasKey(missonData.stagenumber + "-" + i))
+                {
+                    Debug.Log("データが存在する");
+                    Stars[i].color = new Color(255f, 255f, 255f);
+                }
+                else
+                {
+                    Stars[i].color = new Color(0f, 0f, 0f);
+                }
+            }
+            //　詳細を表示する
+            Stagedetail.SetActive(true);
+            stagedetail = true;
         }
     }
 
